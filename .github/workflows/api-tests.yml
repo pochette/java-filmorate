@@ -146,17 +146,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Checkout target repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
 
       - name: Checkout tests
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'yandex-praktikum/java-filmorate'
           ref: ci
@@ -187,10 +187,10 @@ jobs:
 
     steps:
       - name: Checkout target repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -202,7 +202,7 @@ jobs:
           chmod a+x /tmp/wait-for-it.sh
 
       - name: Checkout tests
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: 'yandex-praktikum/java-filmorate'
           ref: ${{ github.event.pull_request.head.ref }}
@@ -247,13 +247,13 @@ jobs:
 
       - name: Upload log artifact
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: filmorate_log
           path: ./*.log
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
           name: postman_tests_report
