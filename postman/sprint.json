@@ -2612,6 +2612,258 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Film get Popular with genre id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const film1_id = pm.collectionVariables.get(\"film1_id\");\r",
+									"const film2_id = pm.collectionVariables.get(\"film2_id\");\r",
+									"const film3_id = pm.collectionVariables.get(\"film3_id\");\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.be.ok;\r",
+									"});\r",
+									"pm.test(\"Test list popular film response\", function () {\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const index1 = pm.response.json().findIndex(x => x.id == film1_id);\r",
+									"const index2 = pm.response.json().findIndex(x => x.id == film2_id);\r",
+									"const index3 = pm.response.json().findIndex(x => x.id == film3_id);\r",
+									"\r",
+									"pm.test(\"Test films сonsistency\", function () {\r",
+									"    pm.expect(index1).to.be.above(index2);\r",
+									"    pm.expect(index1).to.be.above(index3);\r",
+									"    pm.expect(index3).to.be.above(index2);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let user1, user2, user3, film1, film2, film3;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        user2 = await api.addUser(rnd.getUser());\r",
+									"        user3 = await api.addUser(rnd.getUser());\r",
+									"\r",
+									"        film1 = rnd.getFilm();\r",
+									"        film1.genres = [{id: 1}, {id: 5}];\r",
+									"        film1 = await api.addFilm(film1);\r",
+									"\r",
+									"        film2 = rnd.getFilm();\r",
+									"        film2.genres = [{id: 2}, {id: 5}];\r",
+									"        film2 = await api.addFilm(film2);\r",
+									"\r",
+									"        film3 = rnd.getFilm();\r",
+									"        film3.genres = [{id: 3}, {id: 5}];\r",
+									"        film3 = await api.addFilm(film3);\r",
+									"        await api.addLike(film2.id, user1.id);\r",
+									"        await api.addLike(film2.id, user2.id);\r",
+									"        await api.addLike(film2.id, user3.id);\r",
+									"        await api.addLike(film3.id, user1.id);\r",
+									"        await api.addLike(film3.id, user2.id);\r",
+									"        await api.addLike(film1.id, user1.id);\r",
+									"        pm.collectionVariables.set(\"film1_id\", film1.id);\r",
+									"        pm.collectionVariables.set(\"film2_id\", film2.id);\r",
+									"        pm.collectionVariables.set(\"film3_id\", film3.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/popular?count=1000&genreId=5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"popular"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "1000"
+								},
+								{
+									"key": "genreId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Film get Popular with year",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const film1_id = pm.collectionVariables.get(\"film1_id\");\r",
+									"const film2_id = pm.collectionVariables.get(\"film2_id\");\r",
+									"const film3_id = pm.collectionVariables.get(\"film3_id\");\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.be.ok;\r",
+									"});\r",
+									"pm.test(\"Test list popular film response\", function () {\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"const index1 = pm.response.json().findIndex(x => x.id == film1_id);\r",
+									"const index2 = pm.response.json().findIndex(x => x.id == film2_id);\r",
+									"const index3 = pm.response.json().findIndex(x => x.id == film3_id);\r",
+									"\r",
+									"pm.test(\"Test films сonsistency\", function () {\r",
+									"    pm.expect(index1).to.be.above(index2);\r",
+									"    pm.expect(index1).to.be.above(index3);\r",
+									"    pm.expect(index3).to.be.above(index2);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    let user1, user2, user3, film1, film2, film3;\r",
+									"    try {\r",
+									"        user1 = await api.addUser(rnd.getUser());\r",
+									"        user2 = await api.addUser(rnd.getUser());\r",
+									"        user3 = await api.addUser(rnd.getUser());\r",
+									"\r",
+									"        film1 = rnd.getFilm();\r",
+									"        film1.releaseDate = new Date(1999, 1, 1).toISOString().slice(0,10);\r",
+									"        film1 = await api.addFilm(film1);\r",
+									"\r",
+									"        film2 = rnd.getFilm();\r",
+									"        film2.releaseDate = new Date(1999, 1, 10).toISOString().slice(0,10);\r",
+									"        film2 = await api.addFilm(film2);\r",
+									"\r",
+									"        film3 = rnd.getFilm();\r",
+									"        film3.releaseDate = new Date(1999, 4, 5).toISOString().slice(0,10);\r",
+									"        film3 = await api.addFilm(film3);\r",
+									"        await api.addLike(film2.id, user1.id);\r",
+									"        await api.addLike(film2.id, user2.id);\r",
+									"        await api.addLike(film2.id, user3.id);\r",
+									"        await api.addLike(film3.id, user1.id);\r",
+									"        await api.addLike(film3.id, user2.id);\r",
+									"        await api.addLike(film1.id, user1.id);\r",
+									"        pm.collectionVariables.set(\"film1_id\", film1.id);\r",
+									"        pm.collectionVariables.set(\"film2_id\", film2.id);\r",
+									"        pm.collectionVariables.set(\"film3_id\", film3.id);\r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/popular?count=1000&year=1999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"popular"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "1000"
+								},
+								{
+									"key": "year",
+									"value": "1999"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -5790,6 +6042,18 @@
 		},
 		{
 			"key": "popularLength",
+			"value": ""
+		},
+		{
+			"key": "film1_id",
+			"value": ""
+		},
+		{
+			"key": "film2_id",
+			"value": ""
+		},
+		{
+			"key": "film3_id",
 			"value": ""
 		}
 	]
