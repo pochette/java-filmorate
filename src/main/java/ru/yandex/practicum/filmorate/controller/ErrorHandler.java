@@ -10,37 +10,37 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exception.*;
 
-@RestControllerAdvice("ru.yandex.filmorate.controller")
+@RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException e) {
         log.warn("Validation error: {}", e.getMessage(), e);
         return new ErrorResponse("VALIDATION_ERROR", "Ошибка валидации: " + e.getMessage());
     }
-    @ExceptionHandler
+    @ExceptionHandler(FriendHasAddedAlreadyException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleFriendHasAddedAlreadyException(final FriendHasAddedAlreadyException e){
         log.warn("Друг уже добавлен: {}", e.getMessage(), e);
         return new ErrorResponse("VALIDATION_ERROR", "Друг уже добавлен: " + e.getMessage());
 
     }
-    @ExceptionHandler
+    @ExceptionHandler(LikeDoesntExsistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleLikeDoesntExsistException(final LikeDoesntExsistException e) {
         log.warn("Лайк который удаляют не существует : {}", e.getMessage(), e);
         return new ErrorResponse("VALIDATION_ERROR", "Лайк который удаляют не существует : {}" + e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
         log.warn("User not found: {}", e.getMessage(), e);
         return new ErrorResponse("USER_NOT_FOUND", "Пользователь не найден: " + e.getMessage());
     }
-    @ExceptionHandler
+    @ExceptionHandler(FilmDeleteFaultException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleFilmDeleteFaultException(final FilmDeleteFaultException e) {
         log.warn("Произошла ошибка при удалении фильма: {}", e.getMessage(), e);
@@ -48,7 +48,7 @@ public class ErrorHandler {
     }
 
 
-    @ExceptionHandler
+    @ExceptionHandler(FilmNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
         log.warn("Film not found: {}", e.getMessage(), e);

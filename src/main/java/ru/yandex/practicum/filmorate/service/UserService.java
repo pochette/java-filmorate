@@ -56,6 +56,8 @@ public class UserService {
           throw new ValidationException(validator.getErrorMessage());
         });
 
+
+
     return userStorage.createUser(user);
   }
 
@@ -119,12 +121,13 @@ public class UserService {
       throw new ValidationException(
           "Пользователь " + friendId + " не находится в друзьях у пользователя " + userId);
     }
-
     userStorage.deleteFriend(userId, friendId);
     userStorage.deleteFriend(friendId, userId);
   }
 
   public User updateUser(User user) {
+    userStorage.getUserById(user.getId()).orElseThrow(() ->
+            new UserNotFoundException("Пользователь под номером = " + user.getId() + " не найден."));
     return userStorage.updateUser(user);
   }
 }
