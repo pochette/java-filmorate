@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.predicate;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
