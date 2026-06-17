@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -13,6 +14,8 @@ import java.util.Collection;
 
 @Slf4j
 @RestController
+@Validated
+@RequestMapping("films")
 public class FilmController {
 
     private final FilmService filmService;
@@ -22,8 +25,7 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Collection<Long> addLike(
-            @PathVariable(value = "id") @Positive Long idFilm, @PathVariable(value = "userId") @Positive Long idUser) {
+    public Collection<Long> addLike(@PathVariable(value = "id") @Positive Long idFilm, @PathVariable(value = "userId") @Positive Long idUser) {
         return filmService.addLike(idFilm, idUser);
     }
 
@@ -40,13 +42,12 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(
-            @PathVariable(value = "id") @Positive Long filmId, @PathVariable(value = "userId") @Positive Long userId) {
+    public void deleteLike(@PathVariable(value = "id") @Positive Long filmId, @PathVariable(value = "userId") @Positive Long userId) {
         filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById (@PathVariable @Positive Long id) {
+    public Film getFilmById(@PathVariable @Positive Long id) {
         return filmService.getFilmById(id);
     }
 
@@ -56,8 +57,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(
-            @RequestParam(value = "count", required = false, defaultValue = "10") @Min(0) @Max(100) Long count) {
+    public Collection<Film> getPopularFilms(@RequestParam(value = "count", required = false, defaultValue = "10") @Min(0) Long count) {
         return filmService.getPopularFilms(count);
     }
 
@@ -68,6 +68,5 @@ public class FilmController {
 
         return updatedFilm;
     }
-
 
 }

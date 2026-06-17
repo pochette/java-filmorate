@@ -7,8 +7,8 @@ import ru.yandex.practicum.filmorate.service.predicate.FilmPredicate;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
@@ -98,7 +98,7 @@ public class FilmService {
             () -> new UserNotFoundException("Пользователя с ID= " + userId + " не существует"));
 
     getLikeOfFilm(filmId).stream()
-        .filter(u -> !u.equals(userId))
+        .filter(u -> u.equals(userId))
         .findFirst()
         .orElseThrow(
             () ->
@@ -126,7 +126,14 @@ public class FilmService {
   }
 
   public Collection<Film> getPopularFilms(Long count) {
-    return filmStorage.getPopularFilms(count);
+    Map<Long, Set<Long>> allLikes = filmStorage.getAllLikes();
+
+    return filmStorage.getAllFilms().stream()
+            .sorted(Comparator.comparingInt((Film film) ->
+                    allLikes.getOrDefault(film.getId(), Collections.emptySet()).size())
+                    .reversed())
+            .limit(count)
+            .collect(Collectors.toList());
   }
 
   public Film updateFilm(Film film) {

@@ -92,31 +92,6 @@ public class UserService {
     }
 
 
-//        return users.stream().skip(1).map(user -> new HashSet<>(getFriendsByUserId(user.getId()))).filter(commonFriends -> {
-//            if (commonFriends.isEmpty()) {
-//                throw new UserNotFoundException("У пользователя нет друзей -  общих друзей быть не может");
-//            }
-//            return true;
-//        }).allMatch(currentFriends -> {
-//            firstUsersFriends.retainAll(currentFriends);
-//            return !firstUsersFriends.isEmpty();
-//        }) ? new ArrayList<>(firstUsersFriends) : Collections.emptyList();
-//    }
-
-
-//    Iterator<Long> iter = userIds.iterator();
-//    Set<User> commonFriends = new HashSet<>(getFriendsByUserId(iter.next()));
-//    while (iter.hasNext()) {
-//      Set<User> current = new HashSet<>(getFriendsByUserId(iter.next()));
-//
-//      commonFriends.retainAll(current);
-//      if (commonFriends.isEmpty()) {
-//        return Collections.emptyList();
-//      }
-//    }
-//    return new ArrayList<>(commonFriends);
-
-
     public Collection<User> getFriendsByUserId(Long userId) {
         if (getUserById(userId) == null) {
             return Collections.emptySet();

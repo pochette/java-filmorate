@@ -26,6 +26,7 @@ public class InMemoryFilmStorage implements FilmStorage {
   @Override
   public void deleteFilm(Long id) {
     films.remove(id);
+    likes.remove(id);
   }
 
   @Override
@@ -47,13 +48,13 @@ public class InMemoryFilmStorage implements FilmStorage {
   }
 
   @Override
-  public Collection<Film> getPopularFilms(Long count) {
-    return List.of();
+  public Map<Long, Set<Long>> getAllLikes() {
+    return new HashMap<>(likes);
   }
 
   @Override
   public Collection<Long> getLikeOfFilm(Long filmId) {
-    return likes.get(filmId);
+    return likes.getOrDefault(filmId, Collections.emptySet());
   }
 
   @Override
