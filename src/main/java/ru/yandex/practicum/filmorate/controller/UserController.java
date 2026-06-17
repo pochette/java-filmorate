@@ -74,10 +74,11 @@ public class UserController {
     return userService.getAllUsers();
   }
 
-  @GetMapping("/{id}/friends/{friendId}")
-  public Collection<User> getCommonFriends(@NotEmpty @Size(min = 2, max = 100) Collection<Long> usersId) {
-    log.debug("Запрошен список общих друзей у пользователей с ID: {}", usersId);
-    return userService.getCommonFriends(usersId);
+  @GetMapping("/{id}/friends/common/{otherId}")
+  public Collection<User> getCommonFriends(@PathVariable("id") @Positive Long usersId,
+  @PathVariable("otherId") @Positive Long otherId) {
+    log.debug("Запрошен список общих друзей у пользователей с ID: {}", usersId, otherId);
+    return userService.getCommonFriends(usersId, otherId);
   }
 
   @DeleteMapping("/{id}")

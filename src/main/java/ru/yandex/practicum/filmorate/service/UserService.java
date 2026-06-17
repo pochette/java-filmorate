@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.exception.FriendHasAddedAlreadyException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -13,6 +15,7 @@ import ru.yandex.practicum.filmorate.service.predicate.UserPredicate;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Слой Отвечает за Не должен делать Controller HTTP-запросы и ответы Работать с Map, SQL Service
@@ -72,23 +75,33 @@ public class UserService {
         return userStorage.getAllUsers();
     }
 
-    public Collection<User> getCommonFriends(@Size(min = 2) @NotEmpty Collection<Long> userIds) {
+    public Collection<User> getCommonFriends(Long userId,
+                                             Long otherId) {
 
-        List<User> users = userIds.stream().map(this::getUserById).toList();
-        Set<User> firstUsersFriends = new HashSet<>(getFriendsByUserId(users.getFirst().getId()));
-        if (firstUsersFriends.isEmpty()) {
-            return Collections.emptyList();
+        Set<User> usersFriends = new HashSet<>(getFriendsByUserId(userId));
+        Set<User> otherUserFriends = new HashSet<>(getFriendsByUserId(otherId));
+        if (usersFriends.isEmpty() || otherUserFriends.isEmpty() ) {
+            return Collections.emptySet();
         }
-        return users.stream().skip(1).map(user -> new HashSet<>(getFriendsByUserId(user.getId()))).filter(commonFriends -> {
-            if (commonFriends.isEmpty()) {
-                throw new UserNotFoundException("У пользоватея нет друзей-  общих друзей быть не может");
-            }
-            return true;
-        }).allMatch(currentFriends -> {
-            firstUsersFriends.retainAll(currentFriends);
-            return !firstUsersFriends.isEmpty();
-        }) ? new ArrayList<>(firstUsersFriends) : Collections.emptyList();
+
+
+        return usersFriends.stream()
+                .filter(otherUserFriends::contains)
+                .collect(Collectors.toSet());
+
     }
+
+
+//        return users.stream().skip(1).map(user -> new HashSet<>(getFriendsByUserId(user.getId()))).filter(commonFriends -> {
+//            if (commonFriends.isEmpty()) {
+//                throw new UserNotFoundException("У пользователя нет друзей -  общих друзей быть не может");
+//            }
+//            return true;
+//        }).allMatch(currentFriends -> {
+//            firstUsersFriends.retainAll(currentFriends);
+//            return !firstUsersFriends.isEmpty();
+//        }) ? new ArrayList<>(firstUsersFriends) : Collections.emptyList();
+//    }
 
 
 //    Iterator<Long> iter = userIds.iterator();
@@ -106,7 +119,7 @@ public class UserService {
 
     public Collection<User> getFriendsByUserId(Long userId) {
         if (getUserById(userId) == null) {
-
+            return Collections.emptySet();
         }
         return userStorage.getFriendsByUserId(userId);
     }
