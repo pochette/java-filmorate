@@ -1,22 +1,23 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Film.
  */
 
-
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Validated
 public class Film {
+
     @PositiveOrZero
     private Long id;
 
@@ -31,5 +32,10 @@ public class Film {
 
     @Positive
     private Integer duration;
+
+    @NotBlank(message = "поле жанра не может быть пустым.")
+    private Set<Genres> genres;
+
+    private MPA mpaRate;
 
 }
