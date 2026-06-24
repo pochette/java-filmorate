@@ -1,9 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -77,7 +75,7 @@ public class UserController {
   @GetMapping("/{id}/friends/common/{otherId}")
   public Collection<User> getCommonFriends(@PathVariable("id") @Positive Long usersId,
   @PathVariable("otherId") @Positive Long otherId) {
-    log.debug("Запрошен список общих друзей у пользователей с ID: {}", usersId, otherId);
+    log.debug("Запрошен список общих друзей у пользователя {} с пользователем: {}", usersId, otherId);
     return userService.getCommonFriends(usersId, otherId);
   }
 
