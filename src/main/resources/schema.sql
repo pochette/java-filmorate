@@ -1,6 +1,6 @@
 create table FILMS
 (
-    FILM_ID      INTEGER auto_increment
+    FILM_ID      INTEGER unique
         primary key,
     NAME         CHARACTER VARYING(255) not null,
     DESCRIPTION  CHARACTER VARYING,
@@ -25,7 +25,7 @@ create table MPA_TYPE
 
 create table USERS
 (
-    USER_ID  INTEGER auto_increment
+    USER_ID  INTEGER unique
         primary key,
     NAME     CHARACTER VARYING(255) not null,
     EMAIL    CHARACTER VARYING(255) not null
