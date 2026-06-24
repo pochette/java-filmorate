@@ -27,7 +27,7 @@ public class Film {
     @Size(max = 200, message = "E11 Длина описания не более 200 символов.")
     private String description;
 
-    @Past(message = "Дата должна быть в прошлом")
+    @PastOrPresent(message = "Дата должна быть в прошлом")
     private LocalDate releaseDate;
 
     @Positive

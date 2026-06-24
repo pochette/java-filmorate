@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Validated
 public class User {
     @NotBlank(message = "Логин не может быть пустым")
-    @Pattern(regexp = "\\S*", message = "Логи содержит пробелы")
+    @Pattern(regexp = "\\S*", message = "Логин содержит пробелы")
     private String login;
 
 
