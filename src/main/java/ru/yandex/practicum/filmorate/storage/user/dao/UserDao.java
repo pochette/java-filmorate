@@ -30,12 +30,12 @@ public class UserDao implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        String sql = "INSERT INTO users (name, email, login, birthday) " +
-                "values (?,?,?,?)";
+        String sql = "INSERT INTO users (name, email, login, birthday) " + "values (?,?,?,?)";
 
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
                 .usingGeneratedKeyColumns("user_id");
+//                .usingColumns("name", "email", "login", "birthday");
         user.setId(simpleJdbcInsert.executeAndReturnKey(toMap(user)).longValue());
         log.info("Поступил запрос на добавление пользователя. Добавлен пользователь: {}", user);
         return user;

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Validated
 @Slf4j
 public class UserService {
-    private static Long id = 0L;
     private final UserStorage userStorage;
     private final List<UserPredicate> validators;
 
@@ -46,19 +45,24 @@ public class UserService {
         log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
 
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден ID= " + id));
+    }
+
+    public Collection<User> getFriendsByUserId(Long userId) {
+        if (getUserById(userId) == null) {
+            return Collections.emptySet();
+        }
+        return userStorage.getFriendsByUserId(userId);
+    }
+
     public User createUser(User user) {
-        if (user.getId() == null || userStorage.getUserById(user.getId()).isEmpty()) user.setId(getNextId());
         final var valid = validators.stream().filter(validator -> !validator.test(user)).findFirst();
         valid.ifPresent(validator -> {
             throw new ValidationException(validator.getErrorMessage());
         });
 
-
         return userStorage.createUser(user);
-    }
-
-    private Long getNextId() {
-        return ++id;
     }
 
     //TODO Не работает удаление пользователея, 500 ошибка
@@ -76,27 +80,14 @@ public class UserService {
 
         Set<User> usersFriends = new HashSet<>(getFriendsByUserId(userId));
         Set<User> otherUserFriends = new HashSet<>(getFriendsByUserId(otherId));
-        if (usersFriends.isEmpty() || otherUserFriends.isEmpty() ) {
+        if (usersFriends.isEmpty() || otherUserFriends.isEmpty()) {
             return Collections.emptySet();
         }
-
 
         return usersFriends.stream()
                 .filter(otherUserFriends::contains)
                 .collect(Collectors.toSet());
 
-    }
-
-
-    public Collection<User> getFriendsByUserId(Long userId) {
-        if (getUserById(userId) == null) {
-            return Collections.emptySet();
-        }
-        return userStorage.getFriendsByUserId(userId);
-    }
-
-    public User getUserById(Long id) {
-        return userStorage.getUserById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден ID= " + id));
     }
 
     public void removeFromFriend(Long userId, Long friendId) {
