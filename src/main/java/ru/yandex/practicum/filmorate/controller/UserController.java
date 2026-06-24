@@ -48,20 +48,20 @@ public class UserController {
   // DELETE Mapping
   @DeleteMapping("/{id}/friends/{friendId}")
   public void deleteFriend(
-      @PathVariable(value = "id") @Positive Long userId, @PathVariable(value = "friendId") @Positive Long friendId) {
+          @PathVariable(value = "id") @Positive Long userId, @PathVariable @Positive Long friendId) {
     log.debug("Пользователь {} удалил из друзей пользователя {}", userId, friendId);
     userService.removeFromFriend(userId, friendId);
   }
 
   //todo не работает получение списка друзей пользователя
   @GetMapping("/{id}/friends")
-  public Collection<User> getListOfFriends(@PathVariable(value = "id") @Positive Long id) {
+  public Collection<User> getListOfFriends(@PathVariable @Positive Long id) {
     log.debug("Получен список друзей пользователя {}", id);
     return userService.getFriendsByUserId(id);
   }
 
   @GetMapping("/{id}")
-  public User getUserById(@PathVariable(value = "id") @Positive Long id) {
+  public User getUserById(@PathVariable @Positive Long id) {
     log.debug("Получен пользователь с id {}", id);
     return userService.getUserById(id);
   }
@@ -74,14 +74,14 @@ public class UserController {
 
   @GetMapping("/{id}/friends/common/{otherId}")
   public Collection<User> getCommonFriends(@PathVariable("id") @Positive Long usersId,
-  @PathVariable("otherId") @Positive Long otherId) {
+                                           @PathVariable @Positive Long otherId) {
     log.debug("Запрошен список общих друзей у пользователя {} с пользователем: {}", usersId, otherId);
     return userService.getCommonFriends(usersId, otherId);
   }
 
   @DeleteMapping("/{id}")
 
-  public void deleteUser(@PathVariable("id") @Positive Long id) {
+  public void deleteUser(@PathVariable @Positive Long id) {
     userService.deleteUser(id);
 
   }
