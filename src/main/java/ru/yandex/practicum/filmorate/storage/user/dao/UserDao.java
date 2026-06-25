@@ -45,22 +45,27 @@ public class UserDao extends BaseRepository<User> implements UserStorage {
 
     @Override
     public boolean deleteUser(Long userId) {
+        log.info("Поступил запрос на удаление пользователя с ID: {}", userId);
         return delete(DELETE_QUERY, userId);
+
     }
 
     @Override
     public List<User> getAllUsers() {
+        log.info("Поступил запрос на получение списка всех пользователей");
         return findMany(QUERY_FOR_ALL_USERS);
     }
 
     @Override
     public Optional<User> getUserById(Long id) {
+        log.info("Поступил запрос на получение пользователя с ID: {}", id);
         return Optional.ofNullable(findOne(QUERY_FOR_USER_BY_ID,id));
     }
 
     @Override
     public User updateUser(User user) {
-        boolean resultUpdate = update(UPDATE_QUERY,
+        log.info("Поступил запрос на обновление пользователя с ID: {}", user.getId());
+        update(UPDATE_QUERY,
                 user.getName(),
                 user.getEmail(),
                 user.getLogin(),

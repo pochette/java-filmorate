@@ -55,11 +55,11 @@ public class BaseRepository<T> {
             }
             return ps;
         }, keyHolder);
-        Long id = keyHolder.getKeyAs(Long.class);
-        if (id == null) {
+        Number id = keyHolder.getKey();
+        if (null == id) {
             throw new RuntimeException("Не удалось сохранить данные");
         } else
-            return id;
+            return id.longValue();
     }
 
     protected boolean update(String sql, Object... params) {
