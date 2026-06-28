@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 
 @Repository
-public class FriendStorageImpl implements FriendStorage {
+public class FriendStorageDao implements FriendStorage {
     @Override
     public void addFriend(Long userId, Long friendId) {
     }

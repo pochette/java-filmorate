@@ -25,8 +25,8 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Collection<Long> addLike(@PathVariable(value = "id") @Positive Long idFilm, @PathVariable(value = "userId") @Positive Long idUser) {
-        return filmService.addLike(idFilm, idUser);
+    public void addLike(@PathVariable(value = "id") @Positive Long idFilm, @PathVariable(value = "userId") @Positive Long idUser) {
+        filmService.addLike(idFilm, idUser);
     }
 
     @PostMapping

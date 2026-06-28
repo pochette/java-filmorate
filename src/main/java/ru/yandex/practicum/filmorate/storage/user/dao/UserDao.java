@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.storage.user.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.mapper.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.repository.BaseRepository;
+import ru.yandex.practicum.filmorate.storage.BaseRepository;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class UserDao extends BaseRepository<User> implements UserStorage {
     private static final String QUERY_FOR_USER_BY_ID = "SELECT * FROM USERS WHERE USER_ID = ?";
     private static final String QUERY_FOR_ALL_USERS = "SELECT * FROM USERS";
 
-    public UserDao(JdbcTemplate jdbcTemplate, UserMapper userMapper) {
+    public UserDao(JdbcTemplate jdbcTemplate, UserRowMapper userMapper) {
         super(jdbcTemplate, userMapper);
 
     }
