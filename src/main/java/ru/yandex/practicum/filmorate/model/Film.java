@@ -1,13 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
+import ru.yandex.practicum.filmorate.validation.MinimumDate;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -16,7 +19,6 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Validated
 public class Film {
 
@@ -29,13 +31,14 @@ public class Film {
     @Size(max = 200, message = "E11 Длина описания не более 200 символов.")
     private String description;
 
-    @PastOrPresent(message = "Дата должна быть в прошлом")
+    @MinimumDate
     private LocalDate releaseDate;
 
     @Positive
     private Integer duration;
 
-    @NotBlank
-    private MPA mpaRate;
+    private MPA mpa;
+
+    private Set<Genres> genres = new HashSet<>();
 
 }

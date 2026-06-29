@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +41,8 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable(value = "id") @Positive Long filmId, @PathVariable(value = "userId") @Positive Long userId) {
-        filmService.deleteLike(filmId, userId);
+    public void deleteLike(@PathVariable(value = "id") @Positive Long filmId, @PathVariable @Positive Long userId) {
+         filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/{id}")
@@ -68,5 +67,4 @@ public class FilmController {
 
         return updatedFilm;
     }
-
 }

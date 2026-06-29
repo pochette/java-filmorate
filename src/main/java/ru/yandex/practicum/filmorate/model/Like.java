@@ -1,4 +1,15 @@
 package ru.yandex.practicum.filmorate.model;
 
-public record Like(Long userid, Long filmId) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Like {
+    private Long userid;
+    private Long filmId;
 }
+
+

@@ -4,11 +4,13 @@ import ru.yandex.practicum.filmorate.model.Like;
 
 import java.util.Set;
 
-
 public interface LikeStorage {
+
     void addLike(Long userid, Long filmId);
 
-    void deleteLike(Long userId, Long filmId);
+    void deleteLike(Long filmId, Long userId);
+
+    Set<Like> getAllLikes();
 
     Set<Like> getLikesByFilm(Long filmId);
 

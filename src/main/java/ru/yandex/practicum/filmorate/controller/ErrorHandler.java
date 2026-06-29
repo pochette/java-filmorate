@@ -14,56 +14,12 @@ import ru.yandex.practicum.filmorate.exception.*;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final ValidationException e) {
-        log.warn("Validation error: {}", e.getMessage(), e);
-        return new ErrorResponse("VALIDATION_ERROR", "Ошибка валидации: " + e.getMessage());
-    }
-    @ExceptionHandler(FriendHasAddedAlreadyException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleFriendHasAddedAlreadyException(final FriendHasAddedAlreadyException e){
-        log.warn("Друг уже добавлен: {}", e.getMessage(), e);
-        return new ErrorResponse("VALIDATION_ERROR", "Друг уже добавлен: " + e.getMessage());
-
-    }
-    @ExceptionHandler(LikeDoesntExsistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleLikeDoesntExsistException(final LikeDoesntExsistException e) {
-        log.warn("Лайк который удаляют не существует : {}", e.getMessage(), e);
-        return new ErrorResponse("VALIDATION_ERROR", "Лайк который удаляют не существует : {}" + e.getMessage());
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
-        log.warn("User not found: {}", e.getMessage(), e);
-        return new ErrorResponse("USER_NOT_FOUND", "Пользователь не найден: " + e.getMessage());
-    }
-    @ExceptionHandler(FilmDeleteFaultException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleFilmDeleteFaultException(final FilmDeleteFaultException e) {
-        log.warn("Произошла ошибка при удалении фильма: {}", e.getMessage(), e);
-        return new ErrorResponse("FILM_NOT_FOUND", "Фильм не найден" + e.getMessage());
-    }
-
-
-    @ExceptionHandler(FilmNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
-        log.warn("Film not found: {}", e.getMessage(), e);
-        return new ErrorResponse("FILM_NOT_FOUND", "Фильм не найден: " + e.getMessage());
-    }
-
-
-    // Обработка ошибок валидации Spring
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        String field = ex.getBindingResult().getFieldErrors().getFirst().getField();
-        String message = ex.getBindingResult().getFieldErrors().getFirst().getDefaultMessage();
-        log.warn("Method argument validation failed for field '{}': {}", field, message, ex);
-        return new ErrorResponse("FIELD_VALIDATION_FAILED", "Ошибка в поле '" + field + "': " + message);
+    // Общая обработка исключений
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAllUncaughtException(Exception e) {
+        log.warn("Unexpected server error", e);
+        return new ErrorResponse("INTERNAL_ERROR", "Возникла внутренняя ошибка сервера");
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -77,31 +33,67 @@ public class ErrorHandler {
         return new ErrorResponse("CONSTRAINT_VIOLATION", message);
     }
 
-    // Общая обработка исключений
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleAllUncaughtException(Exception e) {
-        log.error("Unexpected server error", e);
-        return new ErrorResponse("INTERNAL_ERROR", "Возникла внутренняя ошибка сервера");
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleEntityNotFoundException(EntityNotFoundException e) {
+        log.error("Произошла ошибка при выполнении запроса в базу данных. Параметры запроса: {}", e.getMessage());
+        return new ErrorResponse("ENTITY_NOT_FOUND", e.getMessage());
     }
 
+    @ExceptionHandler(FilmDeleteFaultException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleFilmDeleteFaultException(final FilmDeleteFaultException e) {
+        log.warn("Произошла ошибка при удалении фильма: {}", e.getMessage(), e);
+        return new ErrorResponse("FILM_NOT_FOUND", "Фильм не найден" + e.getMessage());
+    }
+
+    @ExceptionHandler(FilmNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
+        log.warn("Film not found: {}", e.getMessage(), e);
+        return new ErrorResponse("FILM_NOT_FOUND", "Фильм не найден: " + e.getMessage());
+    }
+
+    @ExceptionHandler(FriendHasAddedAlreadyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleFriendHasAddedAlreadyException(final FriendHasAddedAlreadyException e) {
+        log.warn("Друг уже добавлен: {}", e.getMessage(), e);
+        return new ErrorResponse("VALIDATION_ERROR", "Друг уже добавлен: " + e.getMessage());
+
+    }
+
+    @ExceptionHandler(LikeDoesntExsistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleLikeDoesntExsistException(final LikeDoesntExsistException e) {
+        log.warn("Лайк который удаляют не существует : {}", e.getMessage(), e);
+        return new ErrorResponse("BAD_REQUEST", e.getMessage());
+    }
+
+    // Обработка ошибок валидации Spring
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        String field = ex.getBindingResult().getFieldErrors().getFirst().getField();
+        String message = ex.getBindingResult().getFieldErrors().getFirst().getDefaultMessage();
+        log.warn("Method argument validation failed for field '{}': {}", field, message, ex);
+        return new ErrorResponse("FIELD_VALIDATION_FAILED", "Ошибка в поле '" + field + "': " + message);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
+        log.warn("User not found: {}", e.getMessage(), e);
+        return new ErrorResponse("USER_NOT_FOUND", "Пользователь не найден: " + e.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidationException(final ValidationException e) {
+        log.warn("Validation error: {}", e.getMessage(), e);
+        return new ErrorResponse("VALIDATION_ERROR", "Ошибка валидации: " + e.getMessage());
+    }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //    @ExceptionHandler(ConstraintViolationException.class)
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)

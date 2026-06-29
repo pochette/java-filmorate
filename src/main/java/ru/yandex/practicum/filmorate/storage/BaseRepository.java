@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -40,7 +42,7 @@ public class BaseRepository<T> {
     protected T findOne(String sql, Object... params) {
         List<T> list = jdbc.query(sql, mapper, params);
         if (list.isEmpty()) {
-            throw new RuntimeException("Не удалось найти данные по запросу: " + sql);
+            throw new EntityNotFoundException("Не удалось найти данные по запросу: " + sql);
         }
         return list.getFirst();
     }

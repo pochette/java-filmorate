@@ -18,10 +18,12 @@ import java.util.Optional;
 @Repository
 public class FilmStorageDao extends BaseRepository<Film> implements FilmStorage {
     private static final String INSERT_QUERY = "INSERT INTO FILMS(NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID) VALUES (?, ?, ?, ?, ?)";
-    private static final String DELETE_QUERY = "DELETE FROM FILMS WHERE FILM_ID = ?";
-    private static final String QUERY_FOR_ALL_FILMS = "SELECT * FROM FILMS";
-    private static final String QUERY_FOR_FILM_BY_ID = "SELECT * FROM FILMS WHERE FILM_ID = ?";
-    private static final String QUERY_FOR_UPDATE_FILM = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ?";
+    private static final String DELETE_QUERY = "DELETE FROM FILMS WHERE FILM_ID = ? ";
+    private static final String QUERY_GET_POPULAR_FILMS = "SELECT * FROM FILMS f JOIN PUBLIC.MPA_TYPE m on f.MPA_ID = m.MPA_ID LEFT JOIN (SELECT FILM_ID, COUNT(FILM_ID) AS LIKES FROM FILMS_LIKES GROUP BY FILM_ID) fl " +
+            "ON f.FILM_ID = fl.FILM_ID ORDER BY LIKES DESC LIMIT ?";
+    private static final String QUERY_FOR_ALL_FILMS = "SELECT * FROM FILMS f, MPA_TYPE m WHERE f.MPA_ID = m.MPA_ID";
+    private static final String QUERY_FOR_FILM_BY_ID = "SELECT * FROM FILMS f, MPA_TYPE m WHERE m.MPA_ID = f.MPA_ID AND f.FILM_ID = ? ";
+    private static final String QUERY_FOR_UPDATE_FILM = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? WHERE FILM_ID = ?";
 
     public FilmStorageDao(JdbcTemplate jdbcTemplate, FilmRowMapper filmRowMapper) {
         super(jdbcTemplate, filmRowMapper);
@@ -29,7 +31,7 @@ public class FilmStorageDao extends BaseRepository<Film> implements FilmStorage 
 
     @Override
     public Film createFilm(Film film) {
-        Long id = insert(INSERT_QUERY, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpaRate());
+        Long id = insert(INSERT_QUERY, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId());
         film.setId(id);
         log.info("Поступил запрос на добавление фильма. Добавлен фильм: {}", film);
         return film;
@@ -74,6 +76,11 @@ public class FilmStorageDao extends BaseRepository<Film> implements FilmStorage 
     }
 
     @Override
+    public Collection<Film> getPopularFilms(Long count) {
+        return findMany(QUERY_GET_POPULAR_FILMS,count);
+    }
+
+    @Override
     public Collection<Film> getTopFilms(Integer count, Integer genreId, Integer year) {
         return List.of();
     }
@@ -81,7 +88,13 @@ public class FilmStorageDao extends BaseRepository<Film> implements FilmStorage 
     @Override
     public Film updateFilm(Film film) {
 
-        boolean isUpdated = update(QUERY_FOR_UPDATE_FILM, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpaRate());
+        boolean isUpdated = update(QUERY_FOR_UPDATE_FILM,
+                film.getName(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId());
         if (isUpdated) {
             return film;
         } else {

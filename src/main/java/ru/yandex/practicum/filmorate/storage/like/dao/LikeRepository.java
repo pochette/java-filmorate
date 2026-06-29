@@ -17,6 +17,7 @@ public class LikeRepository extends BaseRepository<Like> implements LikeStorage 
     private static final String DELETE_QUERY = "DELETE FROM FILMS_LIKES WHERE USER_ID = ? AND FILM_ID = ?";
     private static final String GET_LIKES_BY_FILM_QUERY = "SELECT * FROM FILMS_LIKES WHERE FILM_ID = ? ";
     private static final String GET_LIKES_BY_USER_QUERY = "SELECT * FROM FILMS_LIKES WHERE USER_ID = ?";
+    private static final String QUERY_GET_ALL_LIKES = "SELECT * FROM FILMS_LIKES";
 
 
     public LikeRepository(JdbcTemplate jdbc, RowMapper<Like> mapper) {
@@ -25,11 +26,11 @@ public class LikeRepository extends BaseRepository<Like> implements LikeStorage 
 
     @Override
     public void addLike(Long userid, Long filmId) {
-        insert(INSERT_QUERY_FOR_FILM,userid, filmId);
+        update(INSERT_QUERY_FOR_FILM,userid, filmId);
     }
 
     @Override
-    public void deleteLike(Long userId, Long filmId) {
+    public void deleteLike(Long filmId, Long userId) {
         delete(DELETE_QUERY, userId, filmId);
     }
 
@@ -41,5 +42,10 @@ public class LikeRepository extends BaseRepository<Like> implements LikeStorage 
     @Override
     public Set<Like> getLikesByUser(Long userId) {
         return new HashSet<>(findMany(GET_LIKES_BY_FILM_QUERY, userId));
+    }
+
+    @Override
+    public Set<Like> getAllLikes() {
+        return new HashSet<>(findMany(QUERY_GET_ALL_LIKES));
     }
 }

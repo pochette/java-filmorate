@@ -1,5 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
-public record Genres(Integer id, String name) {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
+public class Genres {
+    private Integer id;
+    private String name;
 }
+
 

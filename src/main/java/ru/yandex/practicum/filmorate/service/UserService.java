@@ -45,7 +45,7 @@ public class UserService {
         });
 
         friendStorage.addFriend(userId, friendId);
-        friendStorage.addFriend(friendId, userId);
+//        friendStorage.addFriend(friendId, userId);
         log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
 
@@ -61,10 +61,12 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.createUser(user);
     }
 
-    //TODO Не работает удаление пользователея, 500 ошибка
     public void deleteUser(Long id) {
         userStorage.getUserById(id).orElseThrow(() -> new UserNotFoundException("Пользователь для удаления не найден ID= " + id));
         userStorage.deleteUser(id);

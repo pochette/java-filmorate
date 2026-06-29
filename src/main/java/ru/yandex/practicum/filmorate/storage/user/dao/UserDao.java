@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public class UserDao extends BaseRepository<User> implements UserStorage {
     private static final String INSERT_QUERY = "INSERT INTO USERS (name, email, login, birthday) VALUES ( ?,?,?,?)";
-    private static final String UPDATE_QUERY = "UPDATE USERS SET NAME = ?, EMAIL = ?, LOGIN = ?, BIRTHDAY = ?";
+    private static final String UPDATE_QUERY = "UPDATE USERS SET NAME = ?, EMAIL = ?, LOGIN = ?, BIRTHDAY = ? WHERE USER_ID = ?";
     private static final String DELETE_QUERY = "DELETE FROM USERS WHERE USER_ID = ?";
     private static final String QUERY_FOR_USER_BY_ID = "SELECT * FROM USERS WHERE USER_ID = ?";
     private static final String QUERY_FOR_ALL_USERS = "SELECT * FROM USERS";
@@ -69,7 +69,8 @@ public class UserDao extends BaseRepository<User> implements UserStorage {
                 user.getName(),
                 user.getEmail(),
                 user.getLogin(),
-                user.getBirthday());
+                user.getBirthday(),
+                user.getId());
         return user;
     }
 
