@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Genres {
+public class Genre {
     private Integer id;
     private String name;
 }
