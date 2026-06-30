@@ -1,0 +1,33 @@
+package ru.yandex.practicum.filmorate.controller;
+
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.service.MpaService;
+
+import java.util.List;
+
+@Validated
+@Slf4j
+@RestController
+@RequestMapping("/mpa")
+public class MpaController {
+    private final MpaService mpaService;
+
+    public MpaController(MpaService mpaService) {
+        this.mpaService = mpaService;
+    }
+
+    @GetMapping("/{id}")
+    public MPA getMpaById(@PathVariable @Valid Integer id) {
+        return mpaService.getMpaById(id);
+
+    }
+
+    @GetMapping
+    public List<MPA> getAllMpa() {
+        return mpaService.getAllMpa();
+    }
+}
