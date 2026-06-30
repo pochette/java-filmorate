@@ -18,6 +18,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Validated
 public class Film {
@@ -29,6 +30,7 @@ public class Film {
     private String name;
 
     @Size(max = 200, message = "E11 Длина описания не более 200 символов.")
+    @NotBlank
     private String description;
 
     @MinimumDate
