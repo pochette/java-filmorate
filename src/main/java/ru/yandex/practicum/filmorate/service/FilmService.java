@@ -1,30 +1,38 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.FilmDeleteFaultException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.service.predicate.FilmPredicate;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    private static Long id = 0L;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private final LikeStorage likeStorage;
-
+    private final GenreStorage genreStorage;
     private final List<FilmPredicate> validators;
 
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikeStorage likeStorage, List<FilmPredicate> validators) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikeStorage likeStorage, GenreStorage genreStorage, List<FilmPredicate> validators) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.likeStorage = likeStorage;
+        this.genreStorage = genreStorage;
         this.validators = validators;
     }
 
@@ -35,9 +43,18 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        //    if (film.getId() == null || filmStorage.getFilmById(film.getId()).isEmpty())
         validationFilm(film);
-        return filmStorage.createFilm(film);
+        Film createdFilm = filmStorage.createFilm(film);
+        if (!film.getGenres().isEmpty()) {
+            genreStorage.addGenres(film.getId(), film.getGenres().stream()
+                    .map(Genre::getId)
+                    .toList());
+        }
+        film.setGenres(film.getGenres()
+                .stream()
+                .sorted(Comparator.comparingInt(Genre::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
+        return createdFilm;
     }
 
     private void validationFilm(Film film) {
@@ -60,16 +77,17 @@ public class FilmService {
         likeStorage.deleteLike(filmId, userId);
     }
 
-    public Collection<Like> getLikeOfFilm(Long filmId) {
-        return likeStorage.getLikesByFilm(filmId);
-    }
-
     public Collection<Film> getAllFilms() {
         return filmStorage.getAllFilms();
     }
 
     public Film getFilmById(Long id) {
-        return filmStorage.getFilmById(id).orElseThrow(() -> new FilmNotFoundException("Фильм с Id = " + id + " не найден"));
+       return filmStorage.getFilmById(id).orElseThrow(() -> new FilmNotFoundException("Фильм с Id = " + id + " не найден"));
+
+    }
+
+    public Collection<Like> getLikeOfFilm(Long filmId) {
+        return likeStorage.getLikesByFilm(filmId);
     }
 
     public Collection<Film> getPopularFilms(Long count) {
