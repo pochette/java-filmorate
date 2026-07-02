@@ -4,12 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.validation.MinimumDate;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -40,7 +43,7 @@ public class Film {
     private Integer duration;
 
     private MPA mpa;
-
-    private Set<Genre> genres = new HashSet<>();
+@Builder.Default
+    private Set<Genre> genres = new LinkedHashSet<>();
 
 }

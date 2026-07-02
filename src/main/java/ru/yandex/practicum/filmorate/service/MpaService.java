@@ -14,7 +14,7 @@ public class MpaService {
         this.mpaStorage = mpaRepository;
     }
 
-    public MPA getMpaById(Integer id) {
+    public MPA getMpaById(Long id) {
         return mpaStorage.getMpaById(id);
     }
 

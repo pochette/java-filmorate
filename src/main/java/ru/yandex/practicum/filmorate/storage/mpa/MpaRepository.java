@@ -19,7 +19,7 @@ public class MpaRepository extends BaseRepository<MPA> implements MpaStorage {
 
 
     @Override
-    public MPA getMpaById(Integer id) {
+    public MPA getMpaById(Long id) {
         return findOne(QUERY_GET_MPA_BY_ID, id);
     }
 

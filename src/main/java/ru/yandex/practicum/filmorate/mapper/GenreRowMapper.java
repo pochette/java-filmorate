@@ -16,3 +16,4 @@ public class GenreRowMapper implements RowMapper<Genre> {
         return new Genre(rs.getInt("GENRE_ID"), rs.getString("NAME"));
     }
 }
+

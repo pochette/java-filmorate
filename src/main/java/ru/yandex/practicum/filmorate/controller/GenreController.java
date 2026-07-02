@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @RestController
@@ -25,7 +26,7 @@ public class GenreController {
 
     @GetMapping
     public Set<Genre> getAllGenres() {
-        return new HashSet<>(genreService.getAllGenres());
+        return genreService.getAllGenres();
     }
 
     @GetMapping("/{id}")

@@ -3,12 +3,13 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 
 import java.sql.PreparedStatement;
+import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -64,8 +65,18 @@ public class BaseRepository<T> {
             return id.longValue();
     }
 
+    protected <R> R query(String sql,
+                          ResultSetExtractor<R> extractor,
+                          Object... params) {
+        return jdbc.query(sql, extractor, params);
+    }
+
     protected boolean update(String sql, Object... params) {
         int rowUpdated = jdbc.update(sql, params);
         return rowUpdated > 0;
+    }
+
+    protected String placeholders(int count) {
+        return String.join(",", Collections.nCopies(count, "?"));
     }
 }

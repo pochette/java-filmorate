@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MpaStorage {
 
-    MPA getMpaById(Integer id);
+    MPA getMpaById(Long id);
 
     List<MPA> getAllMpa();
 }

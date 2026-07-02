@@ -6,13 +6,13 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.FilmDeleteFaultException;
 import ru.yandex.practicum.filmorate.exception.FilmNotUpdatedException;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
-import ru.yandex.practicum.filmorate.mapper.GenreRowMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -22,8 +22,13 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
     private static final String DELETE_QUERY = "DELETE FROM FILMS WHERE FILM_ID = ? ";
     private static final String QUERY_GET_POPULAR_FILMS = "SELECT * FROM FILMS f JOIN PUBLIC.MPA_TYPE m on f.MPA_ID = m.MPA_ID LEFT JOIN (SELECT FILM_ID, COUNT(FILM_ID) AS LIKES FROM FILMS_LIKES GROUP BY FILM_ID) fl " +
             "ON f.FILM_ID = fl.FILM_ID ORDER BY LIKES DESC LIMIT ?";
-    private static final String QUERY_FOR_ALL_FILMS = "SELECT * FROM FILMS f, MPA_TYPE m WHERE f.MPA_ID = m.MPA_ID";
-    private static final String QUERY_FOR_FILM_BY_ID = "SELECT * FROM FILMS f, MPA_TYPE m WHERE m.MPA_ID = f.MPA_ID AND f.FILM_ID = ? ";
+    private static final String QUERY_FOR_ALL_FILMS = "" +
+            "SELECT " +
+            "f.*," +
+            "m.MPA_NAME " +
+            "FROM FILMS f " +
+            "JOIN MPA_TYPE m ON f.MPA_ID = m.MPA_ID";
+    private static final String QUERY_FOR_FILM_BY_ID = "SELECT f.*, m.MPA_NAME FROM FILMS f JOIN MPA_TYPE m ON f.MPA_ID = m.MPA_ID WHERE f.FILM_ID = ?";
     private static final String QUERY_FOR_UPDATE_FILM = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? WHERE FILM_ID = ?";
     private static final String QUERY_GET_GENRES_BY_FILM_ID = "SELECT * FROM FILM_GENRES fg, GENRE_TYPE gt WHERE fg.GENRE_ID = gt.GENRE_ID AND FILM_ID = ?";
 
@@ -47,7 +52,6 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
 
     @Override
     public void deleteFilm(Long id) {
-
         Optional<Film> film = getFilmById(id);
         if (film.isPresent()) {
             boolean isDeleted = delete(DELETE_QUERY, id);
@@ -55,7 +59,6 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
                 throw new FilmDeleteFaultException("Произошла ошибка при удалении фильма с ID: " + id);
             }
         }
-
     }
 
     @Override
@@ -75,10 +78,7 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
 
     @Override
     public Optional<Film> getFilmById(Long id) {
-        Film film = findOne(QUERY_FOR_FILM_BY_ID, id);
-        film.setGenres(getGenresByFilm(id));
-
-        return Optional.ofNullable(film);
+        return Optional.ofNullable(findOne(QUERY_FOR_FILM_BY_ID, id));
     }
 
     @Override
@@ -111,14 +111,5 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
         } else {
             throw new FilmNotUpdatedException("Произошла ошибка при обновлении фильма: " + film);
         }
-    }
-
-    private Set<Genre> getGenresByFilm(Long filmId) {
-        List<Genre> genres = jdbc.query(QUERY_GET_GENRES_BY_FILM_ID, new GenreRowMapper(), filmId);
-        return new HashSet<>(genres);
-    }
-
-    private Map<Integer, Set<Genre>> getAllGenres() {
-        return null;
     }
 }

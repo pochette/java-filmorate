@@ -36,7 +36,7 @@ public class ErrorHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException e) {
-        log.error("Произошла ошибка при выполнении запроса в базу данных. Параметры запроса: {}", e.getMessage());
+        log.warn("Произошла ошибка при выполнении запроса в базу данных. Параметры запроса: {}", e.getMessage());
         return new ErrorResponse("ENTITY_NOT_FOUND", e.getMessage());
     }
 
@@ -94,20 +94,6 @@ public class ErrorHandler {
     }
 
 }
-
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ErrorResponse handleValidationException(ConstraintViolationException ex) {
-//        String message = ex.getConstraintViolations().stream()
-//                .map(ConstraintViolation::getMessage)
-//                .findFirst()
-//                .orElse("Ошибка валидации");
-//
-//        return new ErrorResponse("VALIDATION_ERROR", message);
-//    }
-
-
-
 
 
 

@@ -13,6 +13,6 @@ public class MPARowMapper implements RowMapper<MPA> {
     @Nullable
     @Override
     public MPA mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new MPA(rs.getInt("MPA_ID"), rs.getString("MPA_NAME"));
+        return new MPA(rs.getLong("MPA_ID"), rs.getString("MPA_NAME"));
     }
 }
