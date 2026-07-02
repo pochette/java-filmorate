@@ -49,10 +49,12 @@ public class BaseRepository<T> {
     }
 
     //Возвращает LONG id создаваемой сущности
-    protected Long insert(String sql, Object... params) {
+    protected Long insert(String sql, String idName, Object... params) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbc.update(con -> {
-            PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = con.prepareStatement(
+                    sql,
+                    new String[]{idName});
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
             }

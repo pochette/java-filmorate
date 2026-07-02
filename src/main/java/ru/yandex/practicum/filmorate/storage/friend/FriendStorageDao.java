@@ -10,9 +10,9 @@ import java.util.List;
 
 @Repository
 public class FriendStorageDao extends BaseRepository<User> implements FriendStorage {
-    private static final String QUERY_ADD_FRIEND = "INSERT INTO FRIENDS(USER_ID, FRIEND_ID) VALUES ( ?, ? )";
-    private static final String QUERY_DELETE_FRIEND = "DELETE FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
-    private static final String QUERY_GET_FRIENDS_BY_USER_ID = "SELECT u.* FROM USERS u JOIN PUBLIC.FRIENDS F ON u.USER_ID = F.FRIEND_ID WHERE F.USER_ID = ?";
+    private static final String QUERY_ADD_FRIEND = "INSERT INTO friends(user_id, friend_id) VALUES ( ?, ? )";
+    private static final String QUERY_DELETE_FRIEND = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+    private static final String QUERY_GET_FRIENDS_BY_USER_ID = "SELECT u.* FROM users u JOIN friends f ON u.user_id = f.friend_id WHERE f.user_id = ?";
 
     public FriendStorageDao(JdbcTemplate jdbc, RowMapper<User> mapper) {
         super(jdbc, mapper);

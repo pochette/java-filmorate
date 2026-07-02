@@ -13,11 +13,11 @@ import java.util.Set;
 
 @Repository
 public class LikeRepository extends BaseRepository<Like> implements LikeStorage {
-    private static final String INSERT_QUERY_FOR_FILM = "INSERT INTO FILMS_LIKES (USER_ID, FILM_ID) VALUES ( ?, ?)";
-    private static final String DELETE_QUERY = "DELETE FROM FILMS_LIKES WHERE USER_ID = ? AND FILM_ID = ?";
-    private static final String GET_LIKES_BY_FILM_QUERY = "SELECT * FROM FILMS_LIKES WHERE FILM_ID = ? ";
-    private static final String GET_LIKES_BY_USER_QUERY = "SELECT * FROM FILMS_LIKES WHERE USER_ID = ?";
-    private static final String QUERY_GET_ALL_LIKES = "SELECT * FROM FILMS_LIKES";
+    private static final String INSERT_QUERY_FOR_FILM = "INSERT INTO films_likes (user_id, film_id) VALUES ( ?, ?)";
+    private static final String DELETE_QUERY = "DELETE FROM films_likes WHERE user_id = ? AND film_id = ?";
+    private static final String GET_LIKES_BY_FILM_QUERY = "SELECT * FROM films_likes WHERE film_id = ? ";
+    private static final String GET_LIKES_BY_USER_QUERY = "SELECT * FROM films_likes WHERE user_id = ?";
+    private static final String QUERY_GET_ALL_LIKES = "SELECT * FROM films_likes";
 
 
     public LikeRepository(JdbcTemplate jdbc, RowMapper<Like> mapper) {

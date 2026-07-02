@@ -18,11 +18,11 @@ import java.util.Optional;
 @Repository
 
 public class UserDao extends BaseRepository<User> implements UserStorage {
-    private static final String INSERT_QUERY = "INSERT INTO USERS (name, email, login, birthday) VALUES ( ?,?,?,?)";
-    private static final String UPDATE_QUERY = "UPDATE USERS SET NAME = ?, EMAIL = ?, LOGIN = ?, BIRTHDAY = ? WHERE USER_ID = ?";
-    private static final String DELETE_QUERY = "DELETE FROM USERS WHERE USER_ID = ?";
-    private static final String QUERY_FOR_USER_BY_ID = "SELECT * FROM USERS WHERE USER_ID = ?";
-    private static final String QUERY_FOR_ALL_USERS = "SELECT * FROM USERS";
+    private static final String INSERT_QUERY = "INSERT INTO users (name, email, login, birthday) VALUES ( ?,?,?,?)";
+    private static final String UPDATE_QUERY = "UPDATE users SET name = ?, email = ?, login = ?, birthday = ? WHERE user_id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM users WHERE user_id = ?";
+    private static final String QUERY_FOR_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
+    private static final String QUERY_FOR_ALL_USERS = "SELECT * FROM users";
 
     public UserDao(JdbcTemplate jdbcTemplate, UserRowMapper userMapper) {
         super(jdbcTemplate, userMapper);
@@ -32,7 +32,7 @@ public class UserDao extends BaseRepository<User> implements UserStorage {
     @Override
     public User createUser(User user) {
         Long id = insert(
-                INSERT_QUERY,
+                INSERT_QUERY, "user_id",
                 user.getName(),
                 user.getEmail(),
                 user.getLogin(),

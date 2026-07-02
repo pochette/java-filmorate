@@ -99,7 +99,7 @@ public class FilmService {
         return likeStorage.getLikesByFilm(filmId);
     }
 
-    public Collection<Film> getPopularFilms(Long count) {
+    public Collection<Film> getPopularFilms(Integer count) {
         Collection<Film> popularFilms = filmStorage.getPopularFilms(count);
         popularFilms.forEach(film -> {
             film.setGenres(genreStorage.getGenresByFilmId(film.getId()));

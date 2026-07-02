@@ -10,8 +10,8 @@ import java.util.List;
 
 @Repository
 public class MpaRepository extends BaseRepository<MPA> implements MpaStorage {
-    private static final String QUERY_GET_MPA_BY_ID = "SELECT * FROM MPA_TYPE WHERE MPA_ID = ?";
-    private static final String QUERY_GET_ALL_MPA = "SELECT * FROM MPA_TYPE";
+    private static final String QUERY_GET_MPA_BY_ID = "SELECT * FROM mpa_type WHERE mpa_id = ?";
+    private static final String QUERY_GET_ALL_MPA = "SELECT * FROM mpa_type";
 
     public MpaRepository(JdbcTemplate jdbc, RowMapper<MPA> mapper) {
         super(jdbc, mapper);
@@ -19,7 +19,7 @@ public class MpaRepository extends BaseRepository<MPA> implements MpaStorage {
 
 
     @Override
-    public MPA getMpaById(Long id) {
+    public MPA getMpaById(Integer id) {
         return findOne(QUERY_GET_MPA_BY_ID, id);
     }
 

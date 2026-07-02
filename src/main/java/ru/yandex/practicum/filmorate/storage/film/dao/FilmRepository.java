@@ -18,19 +18,19 @@ import java.util.Optional;
 @Repository
 public class FilmRepository extends BaseRepository<Film> implements FilmStorage {
 
-    private static final String INSERT_QUERY = "INSERT INTO FILMS(NAME, DESCRIPTION, RELEASE_DATE, DURATION, MPA_ID) VALUES (?, ?, ?, ?, ?)";
-    private static final String DELETE_QUERY = "DELETE FROM FILMS WHERE FILM_ID = ? ";
-    private static final String QUERY_GET_POPULAR_FILMS = "SELECT * FROM FILMS f JOIN PUBLIC.MPA_TYPE m on f.MPA_ID = m.MPA_ID LEFT JOIN (SELECT FILM_ID, COUNT(FILM_ID) AS LIKES FROM FILMS_LIKES GROUP BY FILM_ID) fl " +
-            "ON f.FILM_ID = fl.FILM_ID ORDER BY LIKES DESC LIMIT ?";
+    private static final String INSERT_QUERY = "INSERT INTO films(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
+    private static final String DELETE_QUERY = "DELETE FROM films WHERE film_id = ? ";
+    private static final String QUERY_GET_POPULAR_FILMS = "SELECT * FROM films f JOIN mpa_type m ON f.mpa_id = m.mpa_id LEFT JOIN (SELECT film_id, COUNT(film_id) AS likes FROM films_likes GROUP BY film_id) fl " +
+            "ON f.film_id = fl.film_id ORDER BY likes DESC LIMIT ?";
     private static final String QUERY_FOR_ALL_FILMS = "" +
             "SELECT " +
             "f.*," +
-            "m.MPA_NAME " +
-            "FROM FILMS f " +
-            "JOIN MPA_TYPE m ON f.MPA_ID = m.MPA_ID";
-    private static final String QUERY_FOR_FILM_BY_ID = "SELECT f.*, m.MPA_NAME FROM FILMS f JOIN MPA_TYPE m ON f.MPA_ID = m.MPA_ID WHERE f.FILM_ID = ?";
-    private static final String QUERY_FOR_UPDATE_FILM = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, MPA_ID = ? WHERE FILM_ID = ?";
-    private static final String QUERY_GET_GENRES_BY_FILM_ID = "SELECT * FROM FILM_GENRES fg, GENRE_TYPE gt WHERE fg.GENRE_ID = gt.GENRE_ID AND FILM_ID = ?";
+            "m.mpa_name " +
+            "FROM films f " +
+            "JOIN mpa_type m ON f.mpa_id = m.mpa_id";
+    private static final String QUERY_FOR_FILM_BY_ID = "SELECT f.*, m.mpa_name FROM films f JOIN mpa_type m ON f.mpa_id = m.mpa_id WHERE f.film_id = ?";
+    private static final String QUERY_FOR_UPDATE_FILM = "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?";
+    private static final String QUERY_GET_GENRES_BY_FILM_ID = "SELECT * FROM film_genres fg, genre_type gt WHERE fg.genre_id = gt.genre_id AND film_id = ?";
 
     public FilmRepository(JdbcTemplate jdbcTemplate, FilmRowMapper filmRowMapper) {
         super(jdbcTemplate, filmRowMapper);
@@ -39,7 +39,7 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
     @Override
     public Film createFilm(Film film) {
         Long id = insert(
-                INSERT_QUERY,
+                INSERT_QUERY, "film_id",
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
@@ -87,7 +87,7 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
     }
 
     @Override
-    public Collection<Film> getPopularFilms(Long count) {
+    public Collection<Film> getPopularFilms(Integer count) {
         return findMany(QUERY_GET_POPULAR_FILMS, count);
     }
 
