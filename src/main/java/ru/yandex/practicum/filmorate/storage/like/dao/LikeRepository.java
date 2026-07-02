@@ -25,8 +25,8 @@ public class LikeRepository extends BaseRepository<Like> implements LikeStorage 
     }
 
     @Override
-    public void addLike(Long userid, Long filmId) {
-        update(INSERT_QUERY_FOR_FILM,userid, filmId);
+    public void addLike(Long filmId, Long userid ) {
+        update(INSERT_QUERY_FOR_FILM, userid, filmId);
     }
 
     @Override

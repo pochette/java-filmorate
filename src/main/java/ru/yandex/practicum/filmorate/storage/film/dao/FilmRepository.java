@@ -20,10 +20,9 @@ public class FilmRepository extends BaseRepository<Film> implements FilmStorage 
 
     private static final String INSERT_QUERY = "INSERT INTO films(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_QUERY = "DELETE FROM films WHERE film_id = ? ";
-    private static final String QUERY_GET_POPULAR_FILMS = "SELECT * FROM films f JOIN mpa_type m ON f.mpa_id = m.mpa_id LEFT JOIN (SELECT film_id, COUNT(film_id) AS likes FROM films_likes GROUP BY film_id) fl " +
-            "ON f.film_id = fl.film_id ORDER BY likes DESC LIMIT ?";
-    private static final String QUERY_FOR_ALL_FILMS = "" +
-            "SELECT " +
+    private static final String QUERY_GET_POPULAR_FILMS = "SELECT f.*, m.mpa_name, likes  FROM films f JOIN mpa_type m ON f.mpa_id = m.mpa_id LEFT JOIN (SELECT film_id, COUNT(film_id) AS likes FROM films_likes GROUP BY film_id) fl" +
+            " ON f.film_id = fl.film_id ORDER BY likes LIMIT ?";
+    private static final String QUERY_FOR_ALL_FILMS = "SELECT " +
             "f.*," +
             "m.mpa_name " +
             "FROM films f " +
