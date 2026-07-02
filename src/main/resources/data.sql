@@ -1,29 +1,28 @@
-SET REFERENTIAL_INTEGRITY FALSE;
-TRUNCATE TABLE FRIENDS      RESTART IDENTITY;
-TRUNCATE TABLE FILM_GENRES RESTART IDENTITY;
-TRUNCATE TABLE GENRE_TYPE        RESTART IDENTITY;
-TRUNCATE TABLE FILMS_LIKES   RESTART IDENTITY;
-TRUNCATE TABLE FILMS        RESTART IDENTITY;
-TRUNCATE TABLE MPA_TYPE   RESTART IDENTITY;
-TRUNCATE TABLE USERS        RESTART IDENTITY;
--- TRUNCATE TABLE EVENTS        RESTART IDENTITY;
--- TRUNCATE TABLE FILMS_DIRECTORS  RESTART IDENTITY;
--- TRUNCATE TABLE DIRECTORS      RESTART IDENTITY;
--- TRUNCATE TABLE REVIEWS      RESTART IDENTITY;
--- TRUNCATE TABLE REVIEWS_LIKES    RESTART IDENTITY;
-SET REFERENTIAL_INTEGRITY TRUE;
+TRUNCATE TABLE
+    films_likes,
+    friends,
+    film_genres,
+    films,
+    genre_type,
+    mpa_type,
+    users
+    RESTART IDENTITY CASCADE;
 
-INSERT INTO GENRE_TYPE (NAME)
-VALUES ('Комедия'),
-       ('Драма'),
-       ('Мультфильм'),
-       ('Триллер'),
-       ('Документальный'),
-       ('Боевик');
+INSERT INTO mpa_type (mpa_name)
+VALUES
+    ('G'),
+    ('PG'),
+    ('PG-13'),
+    ('R'),
+    ('NC-17')
+ON CONFLICT (mpa_name) DO NOTHING;
 
-INSERT INTO MPA_TYPE (MPA_NAME)
-VALUES ('G'),
-       ('PG'),
-       ('PG-13'),
-       ('R'),
-       ('NC-17');
+INSERT INTO genre_type (name)
+VALUES
+    ('Комедия'),
+    ('Драма'),
+    ('Мультфильм'),
+    ('Триллер'),
+    ('Документальный'),
+    ('Боевик')
+ON CONFLICT (name) DO NOTHING;
