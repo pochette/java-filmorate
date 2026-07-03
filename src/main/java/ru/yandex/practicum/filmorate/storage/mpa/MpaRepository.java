@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.BaseRepository;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
@@ -25,6 +26,6 @@ public class MpaRepository extends BaseRepository<MPA> implements MpaStorage {
 
     @Override
     public List<MPA> getAllMpa() {
-        return findMany(QUERY_GET_ALL_MPA);
+        return findMany(QUERY_GET_ALL_MPA).stream().sorted(Comparator.comparingInt(MPA::getId)).toList();
     }
 }

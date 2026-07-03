@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exception.FriendHasAddedAlreadyException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.predicate.UserPredicate;
 import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
@@ -45,7 +44,6 @@ public class UserService {
         });
 
         friendStorage.addFriend(userId, friendId);
-//        friendStorage.addFriend(friendId, userId);
         log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
 
@@ -97,13 +95,8 @@ public class UserService {
 
         userStorage.getUserById(friendId).orElseThrow(() -> new UserNotFoundException("Пользователь " + friendId + " не найден"));
 
-        boolean isFriend = friendStorage.getFriendsByUserId(userId).stream().anyMatch(friend -> friend.getId().equals(friendId));
-
-        if (!isFriend) {
-            throw new ValidationException("Пользователь " + friendId + " не находится в друзьях у пользователя " + userId);
-        }
         friendStorage.deleteFriend(userId, friendId);
-        friendStorage.deleteFriend(friendId, userId);
+
     }
 
     public User updateUser(User user) {

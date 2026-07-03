@@ -43,6 +43,9 @@ public class FilmService {
 
     public Film createFilm(Film film) {
         validationFilm(film);
+        checkMpaByFilm(film);
+        checkGenresByFilm(film);
+
         filmStorage.createFilm(film);
         saveGenres(film);
         return film;
@@ -53,6 +56,22 @@ public class FilmService {
         valid.ifPresent(test -> {
             throw new ValidationException(test.getErrorMessage());
         });
+    }
+
+    private void checkMpaByFilm(Film film) {
+        if (mpaStorage.getMpaById(film.getMpa().getId()) == null) {
+            throw new FilmNotFoundException(
+                    "MPA с id=" + film.getMpa().getId() + " не найден");
+        }
+    }
+
+    private void checkGenresByFilm(Film film) {
+        for (Genre genre : film.getGenres()) {
+            if (genreStorage.getGenreById(genre.getId()) == null) {
+                throw new FilmNotFoundException(
+                        "Жанр с id=" + genre.getId() + " не найден");
+            }
+        }
     }
 
     private void saveGenres(Film film) {
@@ -99,8 +118,8 @@ public class FilmService {
         return likeStorage.getLikesByFilm(filmId);
     }
 
-    public Collection<Film> getPopularFilms(Integer count) {
-        Collection<Film> popularFilms = filmStorage.getPopularFilms(count);
+    public Collection<Film> getPopularFilms(Integer count, Integer year, Integer genreId) {
+        Collection<Film> popularFilms = filmStorage.getPopularFilms(count, year, genreId);
         popularFilms.forEach(film -> {
             film.setGenres(genreStorage.getGenresByFilmId(film.getId()));
             film.setMpa(mpaStorage.getMpaById(film.getMpa().getId()));
@@ -109,6 +128,8 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
+        checkMpaByFilm(film);
+        checkGenresByFilm(film);
         filmStorage.updateFilm(film);
         saveGenres(film);
         return getFilmById(film.getId());

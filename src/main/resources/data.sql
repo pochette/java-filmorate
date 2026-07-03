@@ -1,12 +1,11 @@
-TRUNCATE TABLE
-    films_likes,
-    friends,
-    film_genres,
-    films,
-    genre_type,
-    mpa_type,
-    users
-    RESTART IDENTITY CASCADE;
+DELETE FROM films_likes;
+DELETE FROM friends;
+DELETE FROM film_genres;
+DELETE FROM films;
+DELETE FROM genre_type;
+DELETE FROM mpa_type;
+DELETE FROM users;
+
 
 INSERT INTO mpa_type (mpa_name)
 VALUES
@@ -14,8 +13,7 @@ VALUES
     ('PG'),
     ('PG-13'),
     ('R'),
-    ('NC-17')
-ON CONFLICT (mpa_name) DO NOTHING;
+    ('NC-17');
 
 INSERT INTO genre_type (name)
 VALUES
@@ -24,5 +22,4 @@ VALUES
     ('Мультфильм'),
     ('Триллер'),
     ('Документальный'),
-    ('Боевик')
-ON CONFLICT (name) DO NOTHING;
+    ('Боевик');
