@@ -1,14 +1,25 @@
-INSERT INTO MPA_TYPE (RATING_MPA_ID, NAME)
-VALUES  (1, 'G'),
-        (2, 'PG'),
-        (3, 'PG-13'),
-        (4, 'R'),
-        (5, 'NC-17');
+DELETE FROM films_likes;
+DELETE FROM friends;
+DELETE FROM film_genres;
+DELETE FROM films;
+DELETE FROM genre_type;
+DELETE FROM mpa_type;
+DELETE FROM users;
 
-INSERT INTO GENRE_TYPE (GENRE_ID, NAME)
-VALUES  (1,'Комедия'),
-        (2, 'Драма'),
-        (3, 'Мультфильм'),
-        (4, 'Триллер'),
-        (5, 'Документальный'),
-        (6, 'Боевик');
+
+INSERT INTO mpa_type (mpa_name)
+VALUES
+    ('G'),
+    ('PG'),
+    ('PG-13'),
+    ('R'),
+    ('NC-17');
+
+INSERT INTO genre_type (name)
+VALUES
+    ('Комедия'),
+    ('Драма'),
+    ('Мультфильм'),
+    ('Триллер'),
+    ('Документальный'),
+    ('Боевик');

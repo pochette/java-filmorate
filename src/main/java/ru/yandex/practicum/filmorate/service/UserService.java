@@ -1,18 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.exception.FriendHasAddedAlreadyException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.predicate.UserPredicate;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,17 +18,19 @@ import java.util.stream.Collectors;
  * Бизнес-правила Знать детали хранения Storage Сохранение и получение данных Проверять
  * бизнес-логикуggt Model Данные (User, Film) Выполнять операции
  */
-@Service
+
 @Validated
 @Slf4j
+@Service
 public class UserService {
-    private static Long id = 0L;
     private final UserStorage userStorage;
     private final List<UserPredicate> validators;
+    private final FriendStorage friendStorage;
 
-    public UserService(UserStorage userStorage, List<UserPredicate> validators) {
+    public UserService(UserStorage userStorage, List<UserPredicate> validators, FriendStorage friendStorage) {
         this.userStorage = userStorage;
         this.validators = validators;
+        this.friendStorage = friendStorage;
     }
 
     public void addFriend(Long userId, Long friendId) {
@@ -45,27 +43,28 @@ public class UserService {
             throw new FriendHasAddedAlreadyException("Друг с ID: " + friendId + " уже добавлен к пользователю с ID: " + userId);
         });
 
-        userStorage.addFriend(userId, friendId);
-        userStorage.addFriend(friendId, userId);
+        friendStorage.addFriend(userId, friendId);
         log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
 
+    public User getUserById(Long id) {
+        return userStorage.getUserById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден ID= " + id));
+    }
+
+    public Collection<User> getFriendsByUserId(Long userId) {
+        if (getUserById(userId) == null) {
+            return Collections.emptySet();
+        }
+        return friendStorage.getFriendsByUserId(userId);
+    }
+
     public User createUser(User user) {
-        if (user.getId() == null || userStorage.getUserById(user.getId()).isEmpty()) user.setId(getNextId());
-        final var valid = validators.stream().filter(validator -> !validator.test(user)).findFirst();
-        valid.ifPresent(validator -> {
-            throw new ValidationException(validator.getErrorMessage());
-        });
-
-
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.createUser(user);
     }
 
-    private Long getNextId() {
-        return ++id;
-    }
-
-    //TODO Не работает удаление пользователея, 500 ошибка
     public void deleteUser(Long id) {
         userStorage.getUserById(id).orElseThrow(() -> new UserNotFoundException("Пользователь для удаления не найден ID= " + id));
         userStorage.deleteUser(id);
@@ -80,27 +79,14 @@ public class UserService {
 
         Set<User> usersFriends = new HashSet<>(getFriendsByUserId(userId));
         Set<User> otherUserFriends = new HashSet<>(getFriendsByUserId(otherId));
-        if (usersFriends.isEmpty() || otherUserFriends.isEmpty() ) {
+        if (usersFriends.isEmpty() || otherUserFriends.isEmpty()) {
             return Collections.emptySet();
         }
-
 
         return usersFriends.stream()
                 .filter(otherUserFriends::contains)
                 .collect(Collectors.toSet());
 
-    }
-
-
-    public Collection<User> getFriendsByUserId(Long userId) {
-        if (getUserById(userId) == null) {
-            return Collections.emptySet();
-        }
-        return userStorage.getFriendsByUserId(userId);
-    }
-
-    public User getUserById(Long id) {
-        return userStorage.getUserById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден ID= " + id));
     }
 
     public void removeFromFriend(Long userId, Long friendId) {
@@ -109,13 +95,8 @@ public class UserService {
 
         userStorage.getUserById(friendId).orElseThrow(() -> new UserNotFoundException("Пользователь " + friendId + " не найден"));
 
-        boolean isFriend = userStorage.getFriendsByUserId(userId).stream().anyMatch(friend -> friend.getId().equals(friendId));
+        friendStorage.deleteFriend(userId, friendId);
 
-        if (!isFriend) {
-            throw new ValidationException("Пользователь " + friendId + " не находится в друзьях у пользователя " + userId);
-        }
-        userStorage.deleteFriend(userId, friendId);
-        userStorage.deleteFriend(friendId, userId);
     }
 
     public User updateUser(User user) {

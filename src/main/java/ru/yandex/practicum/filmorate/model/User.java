@@ -19,19 +19,14 @@ public class User {
     @Pattern(regexp = "\\S*", message = "Логин содержит пробелы")
     private String login;
 
-
-    @NotBlank
     private String name;
-
 
     @PositiveOrZero
     private Long id;
 
-
     @Email(message = "Некорректный email")
     @NotEmpty
     private String email;
-
 
     @NotNull
     @PastOrPresent(message = "Некорректно указана дата рождения")

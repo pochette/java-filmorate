@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,8 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Collection<Long> addLike(@PathVariable(value = "id") @Positive Long idFilm, @PathVariable(value = "userId") @Positive Long idUser) {
-        return filmService.addLike(idFilm, idUser);
+    public void addLike(@PathVariable(value = "id") @Positive Long idFilm, @PathVariable(value = "userId") @Positive Long idUser) {
+        filmService.addLike(idFilm, idUser);
     }
 
     @PostMapping
@@ -42,8 +41,8 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable(value = "id") @Positive Long filmId, @PathVariable(value = "userId") @Positive Long userId) {
-        filmService.deleteLike(filmId, userId);
+    public void deleteLike(@PathVariable(value = "id") @Positive Long filmId, @PathVariable @Positive Long userId) {
+         filmService.deleteLike(filmId, userId);
     }
 
     @GetMapping("/{id}")
@@ -57,8 +56,11 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(value = "count", required = false, defaultValue = "10") @Min(0) Long count) {
-        return filmService.getPopularFilms(count);
+    public Collection<Film> getPopularFilms(
+            @RequestParam(value = "count", required = false, defaultValue = "10") @Min(1) Integer count,
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "genreId", required = false) Integer genreId) {
+        return filmService.getPopularFilms(count, year, genreId);
     }
 
     @PutMapping
@@ -68,5 +70,4 @@ public class FilmController {
 
         return updatedFilm;
     }
-
 }
