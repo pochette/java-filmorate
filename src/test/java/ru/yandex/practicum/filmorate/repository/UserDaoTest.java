@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.mapper.UserRowMapper;
 import ru.yandex.practicum.filmorate.model.User;
@@ -20,6 +21,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Import({UserDao.class, UserRowMapper.class})
@@ -34,20 +36,17 @@ public class UserDaoTest {
     @Test
     void createUserTest() {
         User returnUser = userDao.createUser(user1);
-        assertThat(user1).hasFieldOrPropertyWithValue("id", 1L);
-        assertThat(returnUser).hasFieldOrPropertyWithValue("id", 1L);
+        assertThat(returnUser.getId()).isNotNull();
         assertThat(returnUser).hasFieldOrPropertyWithValue("login", "user1Login");
         assertThat(returnUser).hasFieldOrPropertyWithValue("email", "burdak1994@gmail.com");
 
         User returnUser2 = userDao.createUser(user2);
-        assertThat(user2).hasFieldOrPropertyWithValue("id", 2L);
-        assertThat(returnUser2).hasFieldOrPropertyWithValue("id", 2L);
+        assertThat(returnUser2.getId()).isGreaterThan(returnUser.getId());
         assertThat(returnUser2).hasFieldOrPropertyWithValue("login", "user2login");
         assertThat(returnUser2).hasFieldOrPropertyWithValue("email", "burda24@mail.ru");
 
         User returnUser3 = userDao.createUser(user3);
-        assertThat(user3).hasFieldOrPropertyWithValue("id", 3L);
-        assertThat(returnUser3).hasFieldOrPropertyWithValue("id", 3L);
+        assertThat(returnUser3.getId()).isGreaterThan(returnUser2.getId());
         assertThat(returnUser3).hasFieldOrPropertyWithValue("login", "user3Login");
         assertThat(returnUser3).hasFieldOrPropertyWithValue("email", "x.burdak@mail.ru");
 
@@ -57,11 +56,11 @@ public class UserDaoTest {
     void deleteUserNotFoundTest() {
         userDao.createUser(user1);
         userDao.createUser(user2);
-        userDao.createUser(user3);
+        User lastUser = userDao.createUser(user3);
 
         assertThat(userDao.getAllUsers()).hasSize(3);
 
-        boolean isDeleted = userDao.deleteUser(4L);
+        boolean isDeleted = userDao.deleteUser(lastUser.getId() + 1);
 
         // Ожидаем, что ничего не было удалено
         assertThat(isDeleted).isFalse();
@@ -73,12 +72,12 @@ public class UserDaoTest {
     @Test
     void deleteUserTest() {
         userDao.createUser(user1);
-        userDao.createUser(user2);
+        User userToDelete = userDao.createUser(user2);
         userDao.createUser(user3);
 
         assertThat(userDao.getAllUsers()).hasSize(3);
 
-        userDao.deleteUser(2L);
+        userDao.deleteUser(userToDelete.getId());
         assertThat(userDao.getAllUsers()).hasSize(2);
     }
 
@@ -93,9 +92,9 @@ public class UserDaoTest {
 
     @Test
     void getUserByIdTest() {
-        userDao.createUser(user1);
-        User returnUser = userDao.getUserById(1L).orElseThrow();
-        assertThat(returnUser).hasFieldOrPropertyWithValue("id", 1L);
+        Long id = userDao.createUser(user1).getId();
+        User returnUser = userDao.getUserById(id).orElseThrow();
+        assertThat(returnUser).hasFieldOrPropertyWithValue("id", id);
         assertThat(returnUser).hasFieldOrPropertyWithValue("login", "user1Login");
         assertThat(returnUser).hasFieldOrPropertyWithValue("email", "burdak1994@gmail.com");
     }
@@ -138,16 +137,16 @@ public class UserDaoTest {
 
     @Test
     void updateUserTest() {
-        userDao.createUser(user1);
+        Long id = userDao.createUser(user1).getId();
         User updatedUser = User.builder()
-                .id(1L)
+                .id(id)
                 .login("updatedLogin")
                 .name("updatedName")
                 .email("updatedEmail@gmail.com")
                 .birthday(LocalDate.of(1990, 1, 1))
                 .build();
         userDao.updateUser(updatedUser);
-        User returnUser = userDao.getUserById(1L).orElseThrow(() -> new UserNotFoundException("Пользователь не найден "));
+        User returnUser = userDao.getUserById(id).orElseThrow(() -> new UserNotFoundException("Пользователь не найден "));
         assertThat(returnUser).hasFieldOrPropertyWithValue("login", "updatedLogin");
         assertThat(returnUser).hasFieldOrPropertyWithValue("name", "updatedName");
         assertThat(returnUser).hasFieldOrPropertyWithValue("email", "updatedEmail@gmail.com");
